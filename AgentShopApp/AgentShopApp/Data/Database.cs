@@ -8,7 +8,7 @@ namespace AgentShopApp.Data
 {
     public class Database
     {
-
+           
         public SQLiteAsyncConnection DatabaseConnection;
 
         public Database(string dbPath)
