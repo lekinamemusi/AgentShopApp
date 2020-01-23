@@ -8,7 +8,6 @@ namespace AgentShopApp.Data
 {
     public class Database
     {
-           
         public SQLiteAsyncConnection DatabaseConnection;
 
         public Database(string dbPath)
@@ -16,7 +15,6 @@ namespace AgentShopApp.Data
             DatabaseConnection = new SQLiteAsyncConnection(dbPath);
             DatabaseConnection.CreateTableAsync<SMSMessageStore>().Wait();
             DatabaseConnection.CreateTableAsync<SMSMessageStoreData>().Wait();
-            
         }
 
 

@@ -10,14 +10,15 @@ using Android.Content;
 using AgentShopApp.Droid.ActivityAlert.Droid;
 using Android.Support.V4.App;
 using Android;
+using Android.Support.V4.Content;
+using System.Collections.Generic;
+using AgentShopApp.Data;
 
 namespace AgentShopApp.Droid
 {
     [Activity(Label = "AgentShopApp", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        SmsReceiver smsReceiver;
-        IntentFilter intentFilter;
         const int REQUEST_LOCATION = 123;
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -28,12 +29,9 @@ namespace AgentShopApp.Droid
 
             requestAllPermission();
 
-            //this below will register the receiver twice
-            //smsReceiver = new SmsReceiver();
-            //intentFilter = new IntentFilter(SmsReceiver.IntentAction);
-            //intentFilter.Priority = 1000;
-            //RegisterReceiver(smsReceiver, intentFilter);
-
+            //var allList = App.Database.DatabaseConnection.Table<SMSMessageStore>().ToListAsync();
+            //allList.Wait();
+            //var result = allList.Result;
 
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
@@ -41,20 +39,33 @@ namespace AgentShopApp.Droid
 
         private void requestAllPermission()
         {
-            string[] allPermission = new string[] 
+            //https://google-developer-training.github.io/android-developer-phone-sms-course/Lesson%202/2_p_2_sending_sms_messages.html
+            string[] allPermission = new string[]
             {
                 Manifest.Permission.ReceiveSms,
-                Manifest.Permission.ReadSms,
-                Manifest.Permission.SendSms,
-                Manifest.Permission.BroadcastSms,
-                Manifest.Permission.WriteSms
+                //Manifest.Permission.ReadExternalStorage,
+                //Manifest.Permission.WriteExternalStorage,
+                //Manifest.Permission.ReadSms,
+                //Manifest.Permission.SendSms,
+                //Manifest.Permission.BroadcastSms,
+                //Manifest.Permission.WriteSms
             };
             initRequestPermission(allPermission);
         }
 
         private void initRequestPermission(string[] permissions)
         {
-            ActivityCompat.RequestPermissions(this, permissions, REQUEST_LOCATION);
+            var listOfRequiredPerms = new List<string>();
+            foreach (var permission in permissions)
+            {
+                if ((ActivityCompat.CheckSelfPermission(this, permission) == (int)Permission.Granted) == false)
+                    listOfRequiredPerms.Add(permission);
+            }
+            if (listOfRequiredPerms.Count > 0)
+            {
+                string[] permiList = listOfRequiredPerms.ToArray();
+                ActivityCompat.RequestPermissions(this, permiList, REQUEST_LOCATION);
+            }
         }
     }
 }

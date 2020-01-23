@@ -10,8 +10,10 @@ namespace AgentShopApp.Data
     {
         [PrimaryKey, AutoIncrement]
         public long Id { get; set; }
+
+        public long UnixTimeStamp { get; set; }
         [Indexed(Unique = true)]
-        public int SMSMessageStoreId { get; set; }
+        public long SMSMessageStoreId { get; set; }
         [Indexed(Unique = true)]
         public string TransactionId { get; set; }
         public DateTime TransactionTime { get; set; }

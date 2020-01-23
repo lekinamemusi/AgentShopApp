@@ -13,6 +13,7 @@ namespace AgentShopApp.Data
         public string TextMessage { get; set; }
         public string SenderId { get; set; }
         public bool Processed { get; set; }
+        public long UnixTimeStamp { get; set; }
 
     }
 }
