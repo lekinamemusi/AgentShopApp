@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using AgentShopApp.Data.Model;
+using System.Threading.Tasks;
 
 namespace AgentShopApp.SMSProcessor
 {
@@ -13,7 +15,7 @@ namespace AgentShopApp.SMSProcessor
             new MPESAAgentSMSProcessor(),
         };
 
-        public static SMSMessageStoreData Process(SMSMessageStore rawMessage)
+        public static async Task<SMSMessageStoreData> ProcessAsync(SMSMessageStore rawMessage)
         {
             if (rawMessage == null)
                 throw new ArgumentNullException("rawMessage");
@@ -21,11 +23,11 @@ namespace AgentShopApp.SMSProcessor
             SMSMessageStoreData result = null;
             var currentProcessor = Processors.FirstOrDefault(r => r.Support(rawMessage.SenderId));
             if (currentProcessor != null)
-                result = currentProcessor.Process(rawMessage);
+                result = await currentProcessor.ProcessAsync(rawMessage);
             return result;
         }
 
-        public static SMSMessageStoreData ProcessAndSave(SMSMessageStore rawMessage)
+        public static async Task<SMSMessageStoreData> ProcessAndSaveAsync(SMSMessageStore rawMessage)
         {
             if (rawMessage == null)
                 throw new ArgumentNullException("rawMessage");
@@ -33,7 +35,7 @@ namespace AgentShopApp.SMSProcessor
             SMSMessageStoreData result = null;
             var currentProcessor = Processors.FirstOrDefault(r => r.Support(rawMessage.SenderId));
             if (currentProcessor != null)
-                result = currentProcessor.ProcessAndSave(rawMessage);
+                result = await currentProcessor.ProcessAndSaveAsync(rawMessage);
             return result;
         }
     }

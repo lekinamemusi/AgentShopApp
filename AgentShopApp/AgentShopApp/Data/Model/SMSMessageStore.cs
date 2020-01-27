@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using SQLite;
 
-namespace AgentShopApp.Data
+namespace AgentShopApp.Data.Model
 {
     public class SMSMessageStore
     {

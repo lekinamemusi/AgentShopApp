@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using AgentShopApp.Data;
+using AgentShopApp.Data.Model;
+using AgentShopApp.Droid.Services;
+using AgentShopApp.Model;
 using AgentShopApp.SMSProcessor;
 using Android.App;
 using Android.Content;
@@ -13,6 +17,7 @@ using Android.Telephony;
 using Android.Util;
 using Android.Views;
 using Android.Widget;
+using Newtonsoft.Json;
 
 namespace AgentShopApp.Droid.ActivityAlert.Droid
 {
@@ -24,57 +29,43 @@ namespace AgentShopApp.Droid.ActivityAlert.Droid
         public static string IntentAction = "android.provider.Telephony.SMS_RECEIVED";
 
         public static string[] InterceptedSenders = new string[] { "MPESA" };
+
+       
         public override void OnReceive(Context context, Intent intent)
         {
-            if (InterceptedSenders == null)
-                InterceptedSenders = new string[] { };//to prevent null exceptions here
-
-            if (intent.Action.Equals(Telephony.Sms.Intents.SmsReceivedAction))
+            try
             {
-                var smsMessages = Telephony.Sms.Intents.GetMessagesFromIntent(intent);
-                foreach (var smsMessage in smsMessages)
+                if (InterceptedSenders == null)
+                    InterceptedSenders = new string[] { };//to prevent null exceptions here
+
+                if (intent.Action.Equals(Telephony.Sms.Intents.SmsReceivedAction))
                 {
-                    //incase the sender is registered
-                    if (InterceptedSenders.Where(r => r.ToLower() == smsMessage.DisplayOriginatingAddress.ToLower())
-                        .Any())
+                    var smsMessages = Telephony.Sms.Intents.GetMessagesFromIntent(intent);
+                    foreach (var smsMessage in smsMessages)
                     {
-                        //to prevent duplicates within the same message remove
-                        //var displayValue = string.Format(", Sender {0}, Msg: {1}", smsMessage.DisplayOriginatingAddress, smsMessage.MessageBody);
-                        //Toast.MakeText(context, displayValue, ToastLength.Long).Show();
-
-                        DateTime foo = DateTime.UtcNow;
-                        long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
-                        var taskCreate = App.Database.DatabaseConnection.InsertAsync(new SMSMessageStore
+                        //incase the sender is registered
+                        if (InterceptedSenders.Where(r => r.ToLower() == smsMessage.DisplayOriginatingAddress.ToLower())
+                            .Any())
                         {
-                            UnixTimeStamp = unixTime,
-                            Processed = false,
-                            SenderId = smsMessage.DisplayOriginatingAddress,
-                            TextMessage = smsMessage.MessageBody,
                             
-                        });
-                        taskCreate.Wait();
-                       
-                        //load the created object
-                        var taskRead = App.Database.DatabaseConnection.Table<SMSMessageStore>()
-                            .Where(r => r.Id == taskCreate.Result)
-                            .FirstOrDefaultAsync();
-                        taskRead.Wait();
-                        //save the created object again the processed one incase it it possible
-                        SMSProcessors.ProcessAndSave(taskRead.Result);
+                            Intent downloadIntent = new Intent(context, typeof(SmsReceieverService));
+                            var messageModel = new SmsMessageModel
+                            {
+                                SenderId = smsMessage.DisplayOriginatingAddress,
+                                TextMessage = smsMessage.MessageBody,
+                                //TextMessage = "OAO4KVPDQ4 Confirmed. On 24/1/20 at 8:26 AM Take Ksh1,100.00 cash from PASCALENE W MAINA Your M-PESA float balance is Ksh27,197.00.",
+                            };
+                            downloadIntent.PutExtra("smsMessageModel", JsonConvert.SerializeObject(messageModel));
+
+                            context.StartService(downloadIntent);
+
+                        }                     
                     }
-
-
-                    //var allList = App.Database.DatabaseConnection.Table<SMSMessageStore>().ToListAsync();
-                    //allList.Wait();
-                    //var result = allList.Result;
-                    //App.Database.DatabaseConnection.cre
-                    //Log.Debug(TAG, $"MessageBody {msg.MessageBody}");
-                    //Log.Debug(TAG, $"DisplayOriginatingAddress {msg.DisplayOriginatingAddress}");
-                    //Log.Debug(TAG, $"OriginatingAddress {msg.OriginatingAddress}");
-
-
                 }
-
+            }
+            catch (Exception ex)
+            {
+                App.Database.LogException(ex, this.GetType().FullName);
             }
 
         }

@@ -13,6 +13,8 @@ using Android;
 using Android.Support.V4.Content;
 using System.Collections.Generic;
 using AgentShopApp.Data;
+using AgentShopApp.Data.Model;
+using System.Threading.Tasks;
 
 namespace AgentShopApp.Droid
 {
@@ -29,12 +31,45 @@ namespace AgentShopApp.Droid
 
             requestAllPermission();
 
-            //var allList = App.Database.DatabaseConnection.Table<SMSMessageStore>().ToListAsync();
-            //allList.Wait();
-            //var result = allList.Result;
+            //Intent downloadIntent = new Intent(this, typeof(Services.SmsReceieverService));
+            //var messageModel = new Model.SmsMessageModel
+            //{
+            //    SenderId = "MPESA",
+            //    //TextMessage = "OAO0KWM4LQ confirmed. You bought Ksh50.00 of airtime for 254712106254 on 24/1/20 at 9:09 AM.New  balance is Ksh27,147.00.Use current M-PESA PIN to activate M-PESA if you change sim",
+            //    TextMessage = "OAO4KVPDQ4 Confirmed. On 24/1/20 at 8:26 AM Take Ksh1,100.00 cash from PASCALENE W MAINA Your M-PESA float balance is Ksh27,197.00.",
+            //    //TextMessage = "OAN3KNQZC7 Confirmed. on 23/1/20 at 7:51 PM Give Ksh1,530.00 to JAPHET MAINA MBOGO 0712106254. New M-PESA float balance is Ksh28,297.00"
+            //};
+            //downloadIntent.PutExtra("smsMessageModel", Newtonsoft.Json.JsonConvert.SerializeObject(messageModel));
+            //StartService(downloadIntent);
 
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
+        }
+
+        private async Task testAsyncTasks()
+        {
+            try
+            {
+
+                var result = new SMSProcessor.MPESAAgentSMSProcessor();
+                var asynResultAt = await result.ProcessAsync(new SMSMessageStore
+                {
+                    TextMessage = "OAO0KWM4LQ confirmed. You bought Ksh50.00 of airtime for 254712106254 on 24/1/20 at 9:09 AM.New  balance is Ksh27, 147.00.Use current M-PESA PIN to activate M-PESA if you change sim"
+                });
+                var asynResultDp = await result.ProcessAsync(new SMSMessageStore
+                {
+                    TextMessage = "OAO4KVPDQ4 Confirmed. On 24/1/20 at 8:26 AM Take Ksh1,100.00 cash from PASCALENE W MAINA Your M-PESA float balance is Ksh27,197.00.",
+                });
+                var asynResultW = await result.ProcessAsync(new SMSMessageStore
+                {
+                    TextMessage = "OAN3KNQZC7 Confirmed. on 23/1/20 at 7:51 PM Give Ksh1,530.00 to JAPHET MAINA MBOGO 0712106254. New M-PESA float balance is Ksh28,297.00"
+                });
+                //asynResult.
+            }
+            catch (Exception ex)
+            {
+                int y = 0;
+            }
         }
 
         private void requestAllPermission()
