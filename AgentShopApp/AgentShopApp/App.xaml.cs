@@ -17,7 +17,7 @@ namespace AgentShopApp
             {
                 if (database == null)
                 {
-                    var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "agentShopDb2.db3");
+                    var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "agentShopDbLT11.db3");
                     database = new Database(dbPath);
                 }
                 return database;
@@ -27,7 +27,6 @@ namespace AgentShopApp
         public App()
         {
             InitializeComponent();
-
             MainPage = new MainPage();
         }
 

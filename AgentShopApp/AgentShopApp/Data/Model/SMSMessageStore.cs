@@ -14,6 +14,8 @@ namespace AgentShopApp.Data.Model
         public string SenderId { get; set; }
         public bool Processed { get; set; }
         public long UnixTimeStamp { get; set; }
+        [Indexed(Unique = true)]
+        public string TransactionID { get; set; }
 
     }
 }

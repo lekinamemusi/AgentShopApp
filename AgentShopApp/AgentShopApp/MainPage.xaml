@@ -1,14 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:AgentShopApp"
+             xmlns:local="clr-namespace:AgentShopApp.ViewModel"
              x:Class="AgentShopApp.MainPage">
 
-    <StackLayout>
-        <!-- Place new controls here -->
-        <Label Text="Welcome to Xamarin.Forms!" 
-           HorizontalOptions="Center"
-           VerticalOptions="CenterAndExpand" />
-    </StackLayout>
+    <ContentPage.BindingContext>
+        <local:MainPageViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Picker Grid.Column="0" Title="Type" Grid.Row="0" ItemsSource="{Binding TransactionTypes}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding TransactionType}" ></Picker>
+        <Editor Grid.Column="1"  Grid.Row="0" Placeholder="Ref#" Text="{Binding TransactionId}"></Editor>
+
+        <Editor Grid.Column="0" Grid.Row="1" Placeholder="Phone" Text="{Binding PhoneNumber}"></Editor>
+        <Editor Grid.Column="1" Grid.Row="1" Placeholder="Name" Text="{Binding CustomerName}"></Editor>
+
+        <DatePicker Grid.Column="0" Grid.Row="2" Date="{Binding StartDate}"></DatePicker>
+        <DatePicker Grid.Column="1" Grid.Row="2" Date="{Binding EndDate}"></DatePicker>
+
+        <Button Grid.ColumnSpan="2" Grid.Row="4" Command="{Binding RefreshCommand}" Text="{Binding RefreshCommandText}"></Button>
+        <ListView Grid.Row="5" Grid.ColumnSpan="2" ItemsSource="{Binding SMSMessageStoreData}" >
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <ViewCell.ContextActions>
+                            <!-- CommandParameter is the command to pass to the clicked event handler. Because these are menu items, 
+                            not cells managed by the ListView, CommandParameter is neccesary to determine which 
+                            cell the context action was taken on. -->
+                            <MenuItem Text="Assign" CommandParameter="{Binding .}" Command="{Binding OnAssignClicked}" />
+                        </ViewCell.ContextActions>
+                        <StackLayout>
+                            <Label Text="{Binding DisplayString}" />
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+    </Grid>
+
 
 </ContentPage>

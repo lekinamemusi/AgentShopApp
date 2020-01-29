@@ -24,7 +24,7 @@ namespace AgentShopApp.Data.Model
         public bool TransactionSynced { get; set; }
         [Indexed(Unique = false)]
         public int TransactionTypeId { get; set; }
-        
+
         public string Narration { get; set; }
 
 
@@ -34,5 +34,31 @@ namespace AgentShopApp.Data.Model
         public TransactionType TransactionType { get; set; }
         [Ignore]
         public SMSMessageStore SMSMessageStore { get; set; }
+        [Ignore]
+        public string DisplayString
+        {
+            get
+            {
+                var finalString = string.Format("");
+                if (!string.IsNullOrEmpty(TransactionId))
+                    finalString = string.Format("{0} {1}", finalString, TransactionId);
+
+                if (Amount > 0)
+                    finalString = string.Format("{0} KES {1}", finalString, Amount);
+
+                if (ClientData != null)
+                {
+                    finalString = string.Format("{0} Name {1}", finalString, ClientData.ClientName);
+                    finalString = string.Format("{0} Phone {1}", finalString, ClientData.ClientPhone);
+                }
+
+                if (TransactionType != null)
+                {
+                    finalString = string.Format("{0} Type {1}", finalString, TransactionType.Name);
+                }
+
+                    return finalString;
+            }
+        }
     }
 }

@@ -25,12 +25,8 @@ namespace AgentShopApp.Droid.ActivityAlert.Droid
     [IntentFilter(new[] { "android.provider.Telephony.SMS_RECEIVED" })]
     class SmsReceiver : BroadcastReceiver
     {
-        private const string TAG = "AA:SmsReceiver";
-        public static string IntentAction = "android.provider.Telephony.SMS_RECEIVED";
-
         public static string[] InterceptedSenders = new string[] { "MPESA" };
-
-       
+    
         public override void OnReceive(Context context, Intent intent)
         {
             try
@@ -53,7 +49,6 @@ namespace AgentShopApp.Droid.ActivityAlert.Droid
                             {
                                 SenderId = smsMessage.DisplayOriginatingAddress,
                                 TextMessage = smsMessage.MessageBody,
-                                //TextMessage = "OAO4KVPDQ4 Confirmed. On 24/1/20 at 8:26 AM Take Ksh1,100.00 cash from PASCALENE W MAINA Your M-PESA float balance is Ksh27,197.00.",
                             };
                             downloadIntent.PutExtra("smsMessageModel", JsonConvert.SerializeObject(messageModel));
 
