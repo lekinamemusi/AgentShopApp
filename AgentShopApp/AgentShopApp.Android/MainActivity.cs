@@ -69,7 +69,7 @@ namespace AgentShopApp.Droid
                 //////transaction reversal debit float links to a withdraw
                 //listMessages.Add("OA516AJI01 confirmed. Reversal of transaction OAN3KNQZC7 has been successfully reversed on 5/1/20 at 1:14 PM and Ksh1,530.00 is debited from your M-PESA account. Your new float account balance is Ksh39,516.00");
                 //////transaction reversal credit float links to a deposit
-                listMessages.Add("OA516AJI99 confirmed. Reversal of transaction OAO4KVPDQ4 has been successfully reversed on 5/1/20 at 1:14 PM and Ksh1,100.00 is credited from your M-PESA account. Your new float account balance is Ksh39,516.00");
+                //listMessages.Add("OA516AJI99 confirmed. Reversal of transaction OAO4KVPDQ4 has been successfully reversed on 5/1/20 at 1:14 PM and Ksh1,100.00 is credited from your M-PESA account. Your new float account balance is Ksh39,516.00");
                 #endregion
                 foreach (var item in listMessages)
                 {

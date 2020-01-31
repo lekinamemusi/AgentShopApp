@@ -26,7 +26,7 @@ namespace AgentShopApp.Droid.ActivityAlert.Droid
     class SmsReceiver : BroadcastReceiver
     {
         public static string[] InterceptedSenders = new string[] { "MPESA" };
-    
+
         public override void OnReceive(Context context, Intent intent)
         {
             try
@@ -39,22 +39,24 @@ namespace AgentShopApp.Droid.ActivityAlert.Droid
                     var smsMessages = Telephony.Sms.Intents.GetMessagesFromIntent(intent);
                     foreach (var smsMessage in smsMessages)
                     {
-                        //incase the sender is registered
+                        var fullMessage = smsMessage.DisplayMessageBody.ToString();
                         if (InterceptedSenders.Where(r => r.ToLower() == smsMessage.DisplayOriginatingAddress.ToLower())
                             .Any())
                         {
-                            
+                            var messageSMs = string.Empty;
+                            messageSMs = smsMessage.DisplayMessageBody.ToString();
+
                             Intent downloadIntent = new Intent(context, typeof(SmsReceieverService));
                             var messageModel = new SmsMessageModel
                             {
                                 SenderId = smsMessage.DisplayOriginatingAddress,
-                                TextMessage = smsMessage.MessageBody,
+                                TextMessage = messageSMs,
                             };
                             downloadIntent.PutExtra("smsMessageModel", JsonConvert.SerializeObject(messageModel));
 
                             context.StartService(downloadIntent);
 
-                        }                     
+                        }
                     }
                 }
             }
