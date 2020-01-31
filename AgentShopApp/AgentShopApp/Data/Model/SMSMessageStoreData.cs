@@ -44,7 +44,10 @@ namespace AgentShopApp.Data.Model
                     finalString = string.Format("{0} {1}", finalString, TransactionId);
 
                 if (Amount > 0)
-                    finalString = string.Format("{0} KES {1}", finalString, Amount);
+                    finalString = string.Format("{0} KES {1:#,000}", finalString, Amount);
+
+                if (TransactionTime != null)
+                    finalString = string.Format("{0} at {1:d-M-yy hh:mm tt}", finalString, TransactionTime);
 
                 if (ClientData != null)
                 {
@@ -57,7 +60,7 @@ namespace AgentShopApp.Data.Model
                     finalString = string.Format("{0} Type {1}", finalString, TransactionType.Name);
                 }
 
-                    return finalString;
+                return finalString;
             }
         }
     }
