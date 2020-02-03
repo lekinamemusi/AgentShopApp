@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AgentShopApp.Data;
 using AgentShopApp.Data.Model;
+using AgentShopApp.Droid.Service;
 using AgentShopApp.Droid.Services;
 using AgentShopApp.Model;
 using AgentShopApp.SMSProcessor;
@@ -22,7 +23,7 @@ using Newtonsoft.Json;
 namespace AgentShopApp.Droid.ActivityAlert.Droid
 {
     [BroadcastReceiver(Enabled = true, Exported = true)]
-    [IntentFilter(new[] { "android.provider.Telephony.SMS_RECEIVED" })]
+    [IntentFilter(new[] { "android.provider.Telephony.SMS_RECEIVED" }, Priority = Int32.MaxValue)]
     class SmsReceiver : BroadcastReceiver
     {
         public static string[] InterceptedSenders = new string[] { "MPESA" };
@@ -37,27 +38,28 @@ namespace AgentShopApp.Droid.ActivityAlert.Droid
                 if (intent.Action.Equals(Telephony.Sms.Intents.SmsReceivedAction))
                 {
                     var smsMessages = Telephony.Sms.Intents.GetMessagesFromIntent(intent);
-                    foreach (var smsMessage in smsMessages)
+                    var combinedMessage = smsMessages
+                        .Where(r => InterceptedSenders.Where(r2 => r2.ToLower() == r.DisplayOriginatingAddress.ToLower())
+                        .Any())
+                        .Select(r => r.DisplayMessageBody.ToString())
+                        .Aggregate((s1, s2) => string.Format("{0}{1}", s1, s2));
+
+                    if (combinedMessage.Length > 0)
                     {
-                        var fullMessage = smsMessage.DisplayMessageBody.ToString();
-                        if (InterceptedSenders.Where(r => r.ToLower() == smsMessage.DisplayOriginatingAddress.ToLower())
-                            .Any())
+                        //then process this message
+                        var messageModel = new SmsMessageModel
                         {
-                            var messageSMs = string.Empty;
-                            messageSMs = smsMessage.DisplayMessageBody.ToString();
+                            SenderId = smsMessages.FirstOrDefault().DisplayOriginatingAddress,
+                            TextMessage = combinedMessage,
+                        };
+                        Intent smsMessageModelIntent = new Intent(context, typeof(SmsReceieverService));
+                        smsMessageModelIntent.PutExtra("smsMessageModel", JsonConvert.SerializeObject(messageModel));
+                        SmsReceieverJobIntentService.EnqueueWork(context, smsMessageModelIntent);
 
-                            Intent downloadIntent = new Intent(context, typeof(SmsReceieverService));
-                            var messageModel = new SmsMessageModel
-                            {
-                                SenderId = smsMessage.DisplayOriginatingAddress,
-                                TextMessage = messageSMs,
-                            };
-                            downloadIntent.PutExtra("smsMessageModel", JsonConvert.SerializeObject(messageModel));
-
-                            context.StartService(downloadIntent);
-
-                        }
+                        var tostMessage = string.Format("MPA:{0}", messageModel.TransactionCode);
+                        Toast.MakeText(context, tostMessage, ToastLength.Long).Show();
                     }
+
                 }
             }
             catch (Exception ex)

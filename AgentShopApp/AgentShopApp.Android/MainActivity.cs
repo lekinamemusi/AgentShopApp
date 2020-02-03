@@ -97,13 +97,13 @@ namespace AgentShopApp.Droid
             //https://google-developer-training.github.io/android-developer-phone-sms-course/Lesson%202/2_p_2_sending_sms_messages.html
             string[] allPermission = new string[]
             {
+                Manifest.Permission.ReadExternalStorage,
+                Manifest.Permission.WriteExternalStorage,
                 Manifest.Permission.ReceiveSms,
-                //Manifest.Permission.ReadExternalStorage,
-                //Manifest.Permission.WriteExternalStorage,
-                //Manifest.Permission.ReadSms,
-                //Manifest.Permission.SendSms,
-                //Manifest.Permission.BroadcastSms,
-                //Manifest.Permission.WriteSms
+                Manifest.Permission.ReadSms,
+                Manifest.Permission.SendSms,
+                Manifest.Permission.BroadcastSms,
+                Manifest.Permission.WriteSms
             };
             initRequestPermission(allPermission);
         }
