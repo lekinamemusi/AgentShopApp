@@ -17,28 +17,30 @@ using Newtonsoft.Json;
 namespace AgentShopApp.Droid.Services
 {
     //this obsolete does not work in oreo and above devices
-    [Service(Exported = true)]
-    [IntentFilter(new[] { "com.LeizamVentures.AgentShopApp.SmsReceieverServiceIntent" })]
-    public class SmsReceieverService : IntentService
-    {
-        public SmsReceieverService()
-            : base("SmsReceieverService")
-        {
+    //[Service(Exported = true)]
+    //[IntentFilter(new[] { "com.LeizamVentures.AgentShopApp.SmsReceieverServiceIntent" })]
+    //public class SmsReceieverService : IntentService
+    //{
+    //    public SmsReceieverService()
+    //        : base("SmsReceieverService")
+    //    {
 
-        }
+    //    }
 
-        protected async override void OnHandleIntent(Intent intent)
-        {
-            try
-            {
-                var smsMessageModel = JsonConvert.DeserializeObject<SmsMessageModel>(intent.GetStringExtra("smsMessageModel"));
-                await SMSSaverRepository.SaveMessageToDb(smsMessageModel);
-            }
-            catch (Exception ex)
-            {
-                App.Database.LogException(ex, this.GetType().FullName);
-            }
-        }
-    }
+    //    protected async override void OnHandleIntent(Intent intent)
+    //    {
+    //        try
+    //        {
+    //            var smsMessageModel = JsonConvert.DeserializeObject<SmsMessageModel>(intent.GetStringExtra("smsMessageModel"));
+    //            await SMSSaverRepository.SaveMessageToDb(smsMessageModel);
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            App.Database.LogException(ex, this.GetType().FullName);
+    //        }
+    //    }
+
+       
+    //}
 
 }

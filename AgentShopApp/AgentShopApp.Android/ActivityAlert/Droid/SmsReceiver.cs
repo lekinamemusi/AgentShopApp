@@ -32,6 +32,7 @@ namespace AgentShopApp.Droid.ActivityAlert.Droid
         {
             try
             {
+                string.Format("MPA:");
                 if (InterceptedSenders == null)
                     InterceptedSenders = new string[] { };//to prevent null exceptions here
 
@@ -46,18 +47,17 @@ namespace AgentShopApp.Droid.ActivityAlert.Droid
 
                     if (combinedMessage.Length > 0)
                     {
-                        //then process this message
                         var messageModel = new SmsMessageModel
                         {
                             SenderId = smsMessages.FirstOrDefault().DisplayOriginatingAddress,
                             TextMessage = combinedMessage,
                         };
-                        Intent smsMessageModelIntent = new Intent(context, typeof(SmsReceieverService));
-                        smsMessageModelIntent.PutExtra("smsMessageModel", JsonConvert.SerializeObject(messageModel));
-                        SmsReceieverJobIntentService.EnqueueWork(context, smsMessageModelIntent);
-
                         var tostMessage = string.Format("MPA:{0}", messageModel.TransactionCode);
-                        Toast.MakeText(context, tostMessage, ToastLength.Long).Show();
+                        //Toast.MakeText(context, tostMessage, ToastLength.Long).Show();
+                        //then process this message
+                        Intent smsMessageModelIntent = new Intent(context, typeof(SmsReceiverJobIntentService));
+                        smsMessageModelIntent.PutExtra("smsMessageModel", JsonConvert.SerializeObject(messageModel));
+                        SmsReceiverJobIntentService.EnqueueWork(context, smsMessageModelIntent);
                     }
 
                 }

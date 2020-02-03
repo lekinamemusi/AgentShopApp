@@ -83,12 +83,19 @@ namespace AgentShopApp.Data
         //    //set up float, expenses, income, equity, liabilites
         //    throw new NotImplementedException();
         //}
-
+        public long GetUnixTimeStampFromUniversalTime(DateTime universalTime)
+        {
+            long unixTime = ((DateTimeOffset)universalTime).ToUnixTimeSeconds();
+            return unixTime;
+        }
+        public long GetUnixTimeStamp(DateTime dateTime)
+        {
+            DateTime universalTime = dateTime.ToUniversalTime();
+            return GetUnixTimeStampFromUniversalTime(universalTime);
+        }
         public long GetUnixTimeStamp()
         {
-            DateTime foo = DateTime.UtcNow;
-            long unixTime = ((DateTimeOffset)foo).ToUnixTimeSeconds();
-            return unixTime;
+            return GetUnixTimeStamp(DateTime.Now);
         }
 
 

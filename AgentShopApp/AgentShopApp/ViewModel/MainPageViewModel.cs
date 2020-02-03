@@ -123,6 +123,11 @@ namespace AgentShopApp.ViewModel
             }
         }
 
+        public string SyncCommandText
+        {
+            get => "Sync";
+        }
+        
         public string RefreshCommandText
         {
             get => "Refresh";
@@ -135,15 +140,15 @@ namespace AgentShopApp.ViewModel
         {
             this._sMSMessageStoreData = new HashSet<SMSMessageStoreData>();
             RefreshCommand = new Command(this.OnRefreshCommand);
-            OnAssignClicked = new Command(this.OnAssignCommand);
+            SyncCommand = new Command(this.OnSyncCommand);
 
             this.StartDate = DateTime.Now;
             this.EndDate = DateTime.Now;
         }
 
-        private void OnAssignCommand(object obj)
+        private void OnSyncCommand(object obj)
         {
-
+            //start the service using an intent
         }
 
         public async void OnRefreshCommand(object obj)
@@ -254,7 +259,7 @@ namespace AgentShopApp.ViewModel
 
         public Command RefreshCommand { get; }
 
-        public Command OnAssignClicked { get; }
+        public Command SyncCommand { get; }
 
         class Mapper
         {
