@@ -20,27 +20,22 @@ using Android.Views;
 using Android.Widget;
 using Newtonsoft.Json;
 
-namespace AgentShopApp.Droid.ActivityAlert.Droid
+namespace AgentShopApp.BroadCast.SMS
 {
     [BroadcastReceiver(Enabled = true, Exported = true)]
     [IntentFilter(new[] { "android.provider.Telephony.SMS_RECEIVED" }, Priority = Int32.MaxValue)]
-    class SmsReceiver : BroadcastReceiver
+    class SmsBroadCastReceiver : BroadcastReceiver
     {
-        public static string[] InterceptedSenders = new string[] { "MPESA" };
-
         public override void OnReceive(Context context, Intent intent)
         {
             try
             {
-                string.Format("MPA:");
-                if (InterceptedSenders == null)
-                    InterceptedSenders = new string[] { };//to prevent null exceptions here
-
+                
                 if (intent.Action.Equals(Telephony.Sms.Intents.SmsReceivedAction))
                 {
                     var smsMessages = Telephony.Sms.Intents.GetMessagesFromIntent(intent);
                     var combinedMessage = smsMessages
-                        .Where(r => InterceptedSenders.Where(r2 => r2.ToLower() == r.DisplayOriginatingAddress.ToLower())
+                        .Where(r => SMSSaverRepository.InterceptedSenders.Where(r2 => r2.ToLower() == r.DisplayOriginatingAddress.ToLower())
                         .Any())
                         .Select(r => r.DisplayMessageBody.ToString())
                         .Aggregate((s1, s2) => string.Format("{0}{1}", s1, s2));

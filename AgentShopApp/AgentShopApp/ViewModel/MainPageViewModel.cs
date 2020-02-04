@@ -6,6 +6,8 @@ using System.ComponentModel;
 using System.Text;
 using Xamarin.Forms;
 using System.Linq;
+using AgentShopApp.SMSProcessor;
+using AgentShopApp.Dependency.SMS;
 
 namespace AgentShopApp.ViewModel
 {
@@ -127,7 +129,7 @@ namespace AgentShopApp.ViewModel
         {
             get => "Sync";
         }
-        
+
         public string RefreshCommandText
         {
             get => "Refresh";
@@ -148,7 +150,23 @@ namespace AgentShopApp.ViewModel
 
         private void OnSyncCommand(object obj)
         {
-            //start the service using an intent
+            try
+            {
+                //start the service using an intent
+                var modelFilter = new SMSReaderFilterModel
+                {
+                    EndDate = this.EndDate.AddDays(1),
+                    StartDate = this.StartDate,
+                    SenderId = SMSSaverRepository.InterceptedSenders
+                };
+
+                var service = DependencyService.Get<IProcessSMS>();
+                service.ScheduleJob(modelFilter);
+            }
+            catch(Exception ex)
+            {
+                int y = 0;
+            }
         }
 
         public async void OnRefreshCommand(object obj)

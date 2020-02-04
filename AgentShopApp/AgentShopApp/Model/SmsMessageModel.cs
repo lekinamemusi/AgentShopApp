@@ -9,6 +9,7 @@ namespace AgentShopApp.Model
         public string SenderId { get; set; }
         public string TextMessage { get; set; }
 
+        public DateTime SentDate { get; set; }
         public string TransactionCode
         {
             get

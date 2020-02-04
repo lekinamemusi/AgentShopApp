@@ -37,7 +37,9 @@ namespace AgentShopApp.Data
             DatabaseConnection.CreateTableAsync<GlAccount>().Wait();
             /*await*/
             DatabaseConnection.CreateTableAsync<ErrorLogs>().Wait();
-
+            /*await*/
+            DatabaseConnection.CreateTableAsync<DateSyncData>().Wait();
+            
 
             //ClearDb();
         }
@@ -83,6 +85,11 @@ namespace AgentShopApp.Data
         //    //set up float, expenses, income, equity, liabilites
         //    throw new NotImplementedException();
         //}
+        public DateTimeOffset GetUnixTimeStampFromUniversalTimeOfset(DateTime universalTime)
+        {
+            var unixTime = ((DateTimeOffset)universalTime);
+            return unixTime;
+        }
         public long GetUnixTimeStampFromUniversalTime(DateTime universalTime)
         {
             long unixTime = ((DateTimeOffset)universalTime).ToUnixTimeSeconds();

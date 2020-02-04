@@ -9,6 +9,7 @@ namespace AgentShopApp.SMSProcessor
 {
     public class SMSSaverRepository
     {
+        public static string[] InterceptedSenders { get => new string[] { "MPESA" }; }
 
         public static async Task SaveMessageToDb(SmsMessageModel smsMessageModel)
         {
@@ -40,5 +41,6 @@ namespace AgentShopApp.SMSProcessor
             SMSMessageStore.Processed = true;
             await App.Database.DatabaseConnection.UpdateAsync(SMSMessageStore);
         }
+
     }
 }

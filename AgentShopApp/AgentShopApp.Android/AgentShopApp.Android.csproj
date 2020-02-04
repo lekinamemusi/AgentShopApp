@@ -63,7 +63,8 @@
     <PackageReference Include="Xamarin.Android.Support.v7.MediaRouter" Version="27.0.2.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActivityAlert\Droid\SmsReceiver.cs" />
+    <Compile Include="BroadCast\SMS\SmsBroadCastReceiver.cs" />
+    <Compile Include="Dependency\SMS\AndoidProcessSMS.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="Permissions\GenericPermissionRequester.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
