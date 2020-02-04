@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace AgentShopApp
+namespace AgentShopApp.Views.Content
 {
-    public partial class MainPage : ContentPage
+    public partial class Transactions : ContentPage
     {
         public IList<TransactionType> TransactionTypes
         {
@@ -20,9 +20,15 @@ namespace AgentShopApp
                 return result.Result;
             }
         }
-        public MainPage()
+        public Transactions()
         {
             InitializeComponent();
+        }
+
+        private void Editor_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            //var binding = ((Editor)sender).GetBindingExpression(Editor.TextProperty);
+            //binding.UpdateSource();
         }
     }
 }

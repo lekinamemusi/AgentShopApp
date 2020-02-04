@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AgentShopApp.Data.Model;
 using AgentShopApp.Dependency.SMS;
 using AgentShopApp.Droid.Service;
 using AgentShopApp.Model;
@@ -112,7 +113,21 @@ namespace AgentShopApp.Droid.Dependency.SMS
                 {
                     //if (context != null)
                     //    Toast.MakeText(context, string.Format("{0} of {1} failed", counter, totalList), ToastLength.Long);
-                    App.Database.LogException(ex, this.GetType().FullName);
+                    try
+                    {
+                        await App.Database.DatabaseConnection.InsertAsync(new FailedSyncSMS
+                        {
+                            Sorted = false,
+                            TextMessage = item.TextMessage,
+                            TransactionId = item.TransactionCode,
+                            UnixTimeStamp = App.Database.GetUnixTimeStamp(),
+                            ErrorMessage = ex.Message
+                        });
+                    }
+                    catch (Exception)
+                    {
+                        //do not do shit
+                    }
                 }
                 counter++;
             }

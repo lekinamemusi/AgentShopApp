@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:AgentShopApp.ViewModel"
-             x:Class="AgentShopApp.MainPage">
+             x:Class="AgentShopApp.Views.Content.Transactions">
 
     <ContentPage.BindingContext>
         <local:MainPageViewModel />
@@ -23,10 +23,10 @@
         </Grid.RowDefinitions>
 
         <Picker Grid.Column="0" Title="Type" Grid.Row="0" ItemsSource="{Binding TransactionTypes}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding TransactionType}" ></Picker>
-        <Editor Grid.Column="1"  Grid.Row="0" Placeholder="Ref#" Text="{Binding TransactionId}"></Editor>
+        <Editor Grid.Column="1"  Grid.Row="0" Placeholder="Ref#" Text="{Binding TransactionId}" TextChanged="Editor_TextChanged" ></Editor>
 
-        <Editor Grid.Column="0" Grid.Row="1" Placeholder="Phone" Text="{Binding PhoneNumber}"></Editor>
-        <Editor Grid.Column="1" Grid.Row="1" Placeholder="Name" Text="{Binding CustomerName}"></Editor>
+        <Editor Grid.Column="0" Grid.Row="1" Placeholder="Phone" TextChanged="Editor_TextChanged" Text="{Binding PhoneNumber}"></Editor>
+        <Editor Grid.Column="1" Grid.Row="1" Placeholder="Name" TextChanged="Editor_TextChanged" Text="{Binding CustomerName}"></Editor>
 
         <DatePicker Grid.Column="0" Grid.Row="2" Date="{Binding StartDate}"></DatePicker>
         <DatePicker Grid.Column="1" Grid.Row="2" Date="{Binding EndDate}"></DatePicker>

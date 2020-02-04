@@ -83,6 +83,7 @@ namespace AgentShopApp.ViewModel
             {
                 _phoneNumber = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(PhoneNumber)));
+                OnPhoneChangedFxn(this);
             }
         }
 
@@ -97,6 +98,7 @@ namespace AgentShopApp.ViewModel
             {
                 _customerName = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CustomerName)));
+                OnNameChangedFxn(this);
             }
         }
         string _transactionId;
@@ -110,6 +112,7 @@ namespace AgentShopApp.ViewModel
             {
                 _transactionId = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(TransactionId)));
+                OnRefNumberChangedFxn(this);
             }
         }
 
@@ -144,8 +147,32 @@ namespace AgentShopApp.ViewModel
             RefreshCommand = new Command(this.OnRefreshCommand);
             SyncCommand = new Command(this.OnSyncCommand);
 
+            //OnRefNumberChanged = new Command(this.OnRefNumberChangedFxn);
+            //OnPhoneChanged = new Command(this.OnPhoneChangedFxn);
+            //OnNameChanged = new Command(this.OnNameChangedFxn);
+
+
             this.StartDate = DateTime.Now;
             this.EndDate = DateTime.Now;
+        }
+
+        bool preventDateAndTxnTypeFilters { get; set; }
+        public void OnNameChangedFxn(object sender)
+        {
+            preventDateAndTxnTypeFilters = true;
+            this.OnRefreshCommand(sender);
+        }
+
+        public void OnPhoneChangedFxn(object sender)
+        {
+            preventDateAndTxnTypeFilters = true;
+            this.OnRefreshCommand(sender);
+        }
+
+        public void OnRefNumberChangedFxn(object sender)
+        {
+            preventDateAndTxnTypeFilters = true;
+            this.OnRefreshCommand(sender);
         }
 
         private void OnSyncCommand(object obj)
@@ -163,7 +190,7 @@ namespace AgentShopApp.ViewModel
                 var service = DependencyService.Get<IProcessSMS>();
                 service.ScheduleJob(modelFilter);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 int y = 0;
             }
@@ -178,38 +205,43 @@ namespace AgentShopApp.ViewModel
                 var listParams = new List<object>();
                 if (string.IsNullOrEmpty(this.CustomerName) == false)
                 {
-                    whereClause = string.Format(" {0} and cd.ClientName = ? ", whereClause);
+                    whereClause = string.Format(" {0} and cd.ClientName LIKE '%' || ? || '%' ", whereClause);
                     listParams.Add(this.CustomerName);
                 }
                 if (string.IsNullOrEmpty(this.PhoneNumber) == false)
                 {
-                    whereClause = string.Format(" {0} and cd.ClientPhone = ? ", whereClause);
+                    whereClause = string.Format(" {0} and cd.ClientPhone LIKE '%' || ? || '%' ", whereClause);
                     listParams.Add(this.PhoneNumber);
                 }
                 if (string.IsNullOrEmpty(this.TransactionId) == false)
                 {
-                    whereClause = string.Format(" {0} and st.TransactionId = ? ", whereClause);
+                    whereClause = string.Format(" {0} and st.TransactionId LIKE '%' || ? || '%' ", whereClause);
                     listParams.Add(this.TransactionId);
                 }
 
-                if (this.TransactionType != null
-                    && this.TransactionType.Id > 0)
+                if (preventDateAndTxnTypeFilters == false)
                 {
-                    whereClause = string.Format(" {0} and st.TransactionTypeId = ? ", whereClause);
-                    listParams.Add(this.TransactionType.Id);
-                }
-                if (this.StartDate != null)
-                {
-                    //whereClause = string.Format(" {0} and st.TransactionTime >= date(?) ", whereClause);
-                    //listParams.Add(this.StartDate);
-                }
+                    if (this.TransactionType != null
+                        && this.TransactionType.Id > 0)
+                    {
+                        whereClause = string.Format(" {0} and st.TransactionTypeId = ? ", whereClause);
+                        listParams.Add(this.TransactionType.Id);
+                    }
+                    //if (this.StartDate != null)
+                    //{
+                    //    whereClause = string.Format(" {0} and date(st.TransactionTime) >= date(?) ", whereClause);
+                    //    listParams.Add(this.StartDate.Date);
+                    //}
 
-                if (this.EndDate != null)
-                {
-                    //date(period2.DateEnd, '+1 day')
-                    //whereClause = string.Format(" {0} and st.TransactionTime < date(?, '+1 day')  ", whereClause);
-                    //listParams.Add(this.EndDate);
+                    //if (this.EndDate != null)
+                    //{
+                    //    whereClause = string.Format(" {0} and date(st.TransactionTime) < date(?)  ", whereClause);
+                    //    listParams.Add(this.EndDate.AddDays(1).Date);
+                    //}
                 }
+                else
+                    preventDateAndTxnTypeFilters = true;
+
                 var resultData = await App.Database.DatabaseConnection
                     .QueryAsync<Mapper>(string.Format(@"
                 SELECT 
@@ -236,7 +268,8 @@ namespace AgentShopApp.ViewModel
                          INNER JOIN
                     TransactionType tt ON tt.Id = st.TransactionTypeId
                 WHERE
-                    1 {0} ;", whereClause), listParams.ToArray());
+                    1 {0} 
+                order by st.TransactionTime desc;", whereClause), listParams.ToArray());
 
                 this.SMSMessageStoreData = resultData
                     .Select(r => new Data.Model.SMSMessageStoreData
@@ -278,6 +311,12 @@ namespace AgentShopApp.ViewModel
         public Command RefreshCommand { get; }
 
         public Command SyncCommand { get; }
+
+        //public Command OnRefNumberChanged { get; }
+
+        //public Command OnPhoneChanged { get; }
+
+        //public Command OnNameChanged { get; }
 
         class Mapper
         {

@@ -39,7 +39,8 @@ namespace AgentShopApp.Data
             DatabaseConnection.CreateTableAsync<ErrorLogs>().Wait();
             /*await*/
             DatabaseConnection.CreateTableAsync<DateSyncData>().Wait();
-            
+
+            DatabaseConnection.CreateTableAsync<FailedSyncSMS>().Wait();
 
             //ClearDb();
         }
@@ -65,12 +66,15 @@ namespace AgentShopApp.Data
             /*await*/
             DatabaseConnection.Table<ErrorLogs>().DeleteAsync(r => true).Wait();
 
+            DatabaseConnection.Table<FailedSyncSMS>().DeleteAsync(r => true).Wait();
+
+            
             //await SetUpDefaultAccountsState().DeleteAsync(r => true).Wait();
         }
 
-        public void LogException(Exception ex, string moduleName)
+        public async Task<int> LogException(Exception ex, string moduleName)
         {
-            this.DatabaseConnection.InsertAsync(new ErrorLogs
+            return await this.DatabaseConnection.InsertAsync(new ErrorLogs
             {
                 ErrorMessage = ex.Message,
                 FullException = ex.ToString(),

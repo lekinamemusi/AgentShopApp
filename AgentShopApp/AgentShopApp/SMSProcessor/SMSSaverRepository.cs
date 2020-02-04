@@ -34,12 +34,14 @@ namespace AgentShopApp.SMSProcessor
                 };
                 await App.Database.DatabaseConnection.InsertAsync(SMSMessageStore);
             }
-
-            //save the created object again the processed one incase it it possible
-            var messageData = await SMSProcessors.ProcessAndSaveAsync(SMSMessageStore);
-            //if we get here thenmark the SMS as proceseed
-            SMSMessageStore.Processed = true;
-            await App.Database.DatabaseConnection.UpdateAsync(SMSMessageStore);
+            if (SMSMessageStore.Processed == false)
+            {
+                //save the created object again the processed one incase it it possible
+                var messageData = await SMSProcessors.ProcessAndSaveAsync(SMSMessageStore);
+                //if we get here thenmark the SMS as proceseed
+                SMSMessageStore.Processed = true;
+                await App.Database.DatabaseConnection.UpdateAsync(SMSMessageStore);
+            }
         }
 
     }
